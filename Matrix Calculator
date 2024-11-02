@@ -1,0 +1,300 @@
+  #include <iostream>
+using namespace std;
+
+void create_matrix(int matrix[100][100], int rows, int cols)
+{
+    cout << "Enter elements of the matrix:" << endl;
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            cin >> matrix[i][j];
+        }
+    }
+}
+
+void display_matrix(int matrix[100][100], int rows, int cols)
+{
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++) 
+        {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void add_matrices(int mat1[100][100], int mat2[100][100], int result[100][100], int rows, int cols)
+{
+    for (int i = 0; i < rows; i++) 
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            result[i][j] = mat1[i][j] + mat2[i][j];
+        }
+    }
+}
+
+void subtract_matrices(int mat1[100][100], int mat2[100][100], int result[100][100], int rows, int cols) 
+{
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            result[i][j] = mat1[i][j] - mat2[i][j];
+        }
+    }
+}
+
+void multiply_matrices(int mat1[100][100], int mat2[100][100], int result[100][100], int rows1, int cols1, int cols2)
+{
+    for (int i = 0; i < rows1; i++) 
+    {
+        for (int j = 0; j < cols2; j++)
+        {
+            result[i][j] = 0;
+            for (int k = 0; k < cols1; k++) 
+            {
+                result[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
+    }
+}
+
+void transpose_matrix(int matrix[100][100], int result[100][100], int rows, int cols) 
+{
+    for (int i = 0; i < rows; i++) 
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            result[j][i] = matrix[i][j];
+        }
+    }
+}
+
+void getCofactor(int matrix[100][100], int temp[100][100], int p, int q, int n) 
+{
+    int i = 0, j = 0;
+    for (int row = 0; row < n; row++)
+    {
+        for (int col = 0; col < n; col++) 
+        {
+            if (row != p && col != q) 
+            {
+                temp[i][j++] = matrix[row][col];
+                if (j == n - 1)
+                {
+                    j = 0;
+                    i++;
+                }
+            }
+        }
+    }
+}
+
+int determinant(int matrix[100][100], int n)
+{
+    if (n == 1)
+        return matrix[0][0];
+
+    int temp[100][100];
+    int det = 0;
+    int sign = 1;
+
+    for (int f = 0; f < n; f++) 
+    {
+        getCofactor(matrix, temp, 0, f, n);
+        det += sign * matrix[0][f] * determinant(temp, n - 1);
+        sign = -sign;
+    }
+
+    return det;
+}
+
+void adjoint(int matrix[100][100], int adj[100][100], int n)
+{
+    if (n == 1)
+    {
+        adj[0][0] = 1;
+        return;
+    }
+
+    int temp[100][100];
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            getCofactor(matrix, temp, i, j, n);
+            int sign;
+            if ((i + j) % 2 == 0)
+            {
+                sign = 1;
+            }
+            else {
+                sign = -1;
+            }
+            adj[j][i] = sign * determinant(temp, n - 1);
+        }
+    }
+}
+
+bool inverse(int matrix[100][100], float inverse[100][100], int n)
+{
+    int det = determinant(matrix, n);
+    if (det == 0)
+    {
+        cout << "Singular matrix, can't find its inverse";
+        return false;
+    }
+
+    int adj[100][100];
+    adjoint(matrix, adj, n);
+
+    for (int i = 0; i < n; i++) 
+    {
+        for (int j = 0; j < n; j++)
+        {
+            inverse[i][j] = adj[i][j] / float(det);
+        }
+    }
+
+    return true;
+}
+
+int main()
+{
+    int choice;
+    cout << "Matrix Calculator" << endl;
+    cout << "1. Addition" << endl;
+    cout << "2. Subtraction" << endl;
+    cout << "3. Multiplication" << endl;
+    cout << "4. Transpose" << endl;
+    cout << "5. Determinant" << endl;
+    cout << "6. Inverse" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    int mat1[100][100], mat2[100][100], result[100][100];
+    int rows1, cols1, rows2, cols2;
+
+    if (choice == 1 || choice == 2 || choice == 3)
+    {
+        cout << "Enter number of rows for the first matrix: ";
+        cin >> rows1;
+        cout << "Enter number of columns for the first matrix: ";
+        cin >> cols1;
+        create_matrix(mat1, rows1, cols1);
+
+        cout << "Enter number of rows for the second matrix: ";
+        cin >> rows2;
+        cout << "Enter number of columns for the second matrix: ";
+        cin >> cols2;
+        create_matrix(mat2, rows2, cols2);
+
+        if (choice == 1)
+        {
+            if (rows1 == rows2 && cols1 == cols2) 
+            {
+                add_matrices(mat1, mat2, result, rows1, cols1);
+                cout << "Result is:" << endl;
+                display_matrix(result, rows1, cols1);
+            }
+            else
+            {
+                cout << "Matrices must have the same dimensions for addition";
+            }
+        }
+        else if (choice == 2)
+        {
+            if (rows1 == rows2 && cols1 == cols2)
+            {
+                subtract_matrices(mat1, mat2, result, rows1, cols1);
+                cout << "Result is:" << endl;
+                display_matrix(result, rows1, cols1);
+            }
+            else
+            {
+                cout << "Matrices must have the same dimensions for subtraction";
+            }
+        }
+        else if (choice == 3) 
+        {
+            if (cols1 == rows2)
+            {
+                multiply_matrices(mat1, mat2, result, rows1, cols1, cols2);
+                cout << "Result is:" << endl;
+                display_matrix(result, rows1, cols2);
+            }
+            else
+            {
+                cout << "Number of columns in the first matrix must equal the number of rows in the second matrix for multiplication";
+            }
+        }
+    }
+    else if (choice == 4) 
+    {
+        cout << "Enter number of rows for the first matrix: ";
+        cin >> rows1;
+        cout << "Enter number of columns for the first matrix: ";
+        cin >> cols1;
+        create_matrix(mat1, rows1, cols1);
+
+        transpose_matrix(mat1, result, rows1, cols1);
+        cout << "Result is:" << endl;
+        display_matrix(result, cols1, rows1);
+    }
+    else if (choice == 5)
+    {
+        cout << "Enter number of rows for the matrix: ";
+        cin >> rows1;
+        cout << "Enter number of columns for the matrix: ";
+        cin >> cols1;
+
+        if (rows1 != cols1)
+        {
+            cout << "Determinant can only be calculated for square matrices";
+        }
+        else
+        {
+            create_matrix(mat1, rows1, cols1);
+            int det = determinant(mat1, rows1);
+            cout << "Determinant is: " << det << endl;
+        }
+    }
+    else if (choice == 6)
+    {
+        cout << "Enter number of rows for the matrix: ";
+        cin >> rows1;
+        cout << "Enter number of columns for the matrix: ";
+        cin >> cols1;
+
+        if (rows1 != cols1) 
+        {
+            cout << "Inverse can only be calculated for square matrices";
+        }
+        else
+        {
+            create_matrix(mat1, rows1, cols1);
+            float inv[100][100];
+            if (inverse(mat1, inv, rows1))
+            {
+                cout << "Inverse is:" << endl;
+                for (int i = 0; i < rows1; i++) 
+                {
+                    for (int j = 0; j < cols1; j++)
+                    {
+                        cout << inv[i][j] << " ";
+                    }
+                    cout << endl;
+                }
+            }
+        }
+    }
+    else
+    {
+        cout << "Invalid choice";
+    }
+
+    return 0;
+}
