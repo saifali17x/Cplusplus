@@ -1,4 +1,4 @@
-  #include <iostream>
+#include <iostream>
 using namespace std;
 
 void create_matrix(int matrix[100][100], int rows, int cols)
