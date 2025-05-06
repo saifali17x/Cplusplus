@@ -1,0 +1,312 @@
+#include <iostream>
+using namespace std;
+
+template <typename Type>
+class Node 
+{
+public:
+    Type data;
+    Node* next;
+    Node(Type value)
+    {
+        data = value;
+        next = nullptr;
+    }
+};
+
+template <typename Type>
+class LinkedList 
+{
+private:
+    Node<Type>* head;
+
+public:
+    LinkedList() 
+    {
+        head = nullptr;
+    }
+
+    // Add at the beginning
+    void insertAtHead(Type value)
+    {
+        Node<Type>* newNode = new Node<Type>(value);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Add at the end
+    void insertAtTail(Type value)
+        {
+        Node<Type>* newNode = new Node<Type>(value);
+        if (head == nullptr)
+        {
+            head = newNode
+                return;
+        }
+        Node<Type>* temp = head;
+        while (temp->next != nullptr)
+        {
+            temp = temp->next;
+            temp->next = newNode;
+        }
+    }
+void deleteAtHead() 
+    {
+        if (head == nullptr) return;
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    void deleteAtTail() 
+        {
+        if (head == nullptr) return;
+        if (head->next == nullptr)
+        {
+            delete head;
+            head = nullptr;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next->next != nullptr)
+            temp = temp->next;
+        delete temp->next;
+        temp->next = nullptr;
+    }
+
+    // Insert at a given index
+    void insertAt(int index ,Type value)
+    {
+        if (index < 0)
+        {
+            cout << "Invalid Index" << endl;
+            return;
+        }
+        if (index == 0)
+        {
+            insertAtHead(value);
+            return;
+        }
+        Node<Type>* newNode = new Node<Type>(value);
+        Node<Type>* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++)
+        {
+            temp = temp->next;
+        }
+        if (temp == nullptr)
+        {
+            cout << "Index out of Bounds" << endl;
+            return;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+
+    // Delete by value
+    void deleteByValue(Type value) {
+        if (head == nullptr) return;
+
+        if (head->data == value) {
+            Node<Type>* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node<Type>* current = head;
+        while (current->next != nullptr && current->next->data != value)
+            current = current->next;
+
+        if (current->next == nullptr) {
+            cout << "Value not found" << endl;
+            return;
+        }
+
+        Node<Type>* temp = current->next;
+        current->next = temp->next;
+        delete temp;
+    }
+
+    // Delete at index
+    void deleteAt(int index) 
+       {
+        if (head == nullptr || index < 0) 
+        {
+            cout << "Invalid index" << endl;
+            return;
+        }
+
+        if (index == 0)
+        {
+            Node<Type>* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+
+        Node<Type>* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++)
+            temp = temp->next;
+
+        if (temp == nullptr || temp->next == nullptr) {
+            cout << "Index out of bounds" << endl;
+            return;
+        }
+
+        Node<Type>* nodeToDelete = temp->next;
+        temp->next = nodeToDelete->next;
+        delete nodeToDelete;
+    }
+
+    // Search
+    bool search(Type value)
+      {
+        Node<Type>* temp = head;
+        while (temp != nullptr)
+        {
+            if (temp->data == value)
+            {
+                return true
+
+            }
+            temp = temp->next;
+        }
+        return false;
+   }
+
+    // Display all elements
+    void display()
+   {
+        if (head == nullptr)
+      {
+            cout << "List is empty" << endl;
+            return;
+        }
+        Node<Type>* temp = head;
+        while (temp != nullptr) {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        }
+        cout << "NULL" << endl;
+    }
+
+    // Reverse the list
+    void reverse()
+{
+        Node<Type>* prev = nullptr;
+        Node<Type>* curr = head;
+        while (curr != nullptr) 
+      {
+            Node<Type>* next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+    }
+
+    // Sort in ascending order (Bubble sort style)
+    void sortAscending() 
+     {
+        if (head == nullptr) return;
+        bool swapped;
+        do
+        {
+            swapped = false;
+            Node<Type>* temp = head;
+            while (temp->next != nullptr) {
+                if (temp->data > temp->next->data) 
+               {
+                    Type tmp = temp->data;
+                    temp->data = temp->next->data;
+                    temp->next->data = tmp;
+                    swapped = true;
+                }
+                temp = temp->next;
+            }
+        } while (swapped);
+    }
+
+    // Sort in descending order
+    void sortDescending() 
+      {
+        if (head == nullptr) return;
+        bool swapped;
+        do 
+{
+            swapped = false;
+            Node<Type>* temp = head;
+            while (temp->next != nullptr) 
+{
+                if (temp->data < temp->next->data)
+{
+                    Type tmp = temp->data;
+                    temp->data = temp->next->data;
+                    temp->next->data = tmp;
+                    swapped = true;
+                }
+                temp = temp->next;
+            }
+        } while (swapped);
+    }
+
+    // Length of the list
+    int length() 
+      {
+        int count = 0;
+        Node<Type>* temp = head;
+        while (temp != nullptr) 
+      {
+            count++;
+            temp = temp->next;
+        }
+        return count;
+    }
+
+    // Destructor
+    ~LinkedList() 
+{
+        while (head != nullptr) 
+{
+            Node<Type>* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+int main()
+{
+    LinkedList<int> list;
+
+    list.insertAtHead(10);
+    list.insertAtTail(20);
+    list.insertAtTail(30);
+    list.insertAt(1, 15);  // Insert 15 at index 1
+    list.display();
+
+    cout << "Searching 20 at index: " << list.search(20) << endl;
+
+    list.deleteByValue(15);
+    list.display();
+
+    list.deleteAt(1);
+    list.display();
+
+    list.insertAtTail(5);
+    list.insertAtTail(50);
+    list.sortAscending();
+    cout << "Sorted ascending: ";
+    list.display();
+
+    list.sortDescending();
+    cout << "Sorted descending: ";
+    list.display();
+
+    cout << "Reversed list: ";
+    list.reverse();
+    list.display();
+
+    cout << "Length of list: " << list.length() << endl;
+
+    return 0;
+}
