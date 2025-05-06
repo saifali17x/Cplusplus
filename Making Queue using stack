@@ -1,0 +1,142 @@
+#include <iostream>
+using namespace std;
+
+template<typename Type>
+class Stack
+{
+private:
+    Type* arr;
+    int top;
+    int maxSize;
+
+public:
+    Stack(int size = 100)
+    {
+        maxSize = size;
+        arr = new Type[maxSize];
+        top = -1;
+    }
+
+    void push(Type value)
+    {
+        if (top == maxSize - 1)
+        {
+            cout << "Stack overflow!" << endl;
+            return;
+        }
+        arr[++top] = value;
+    }
+
+    Type pop()
+    {
+        if (isEmpty())
+        {
+            cout << "Stack underflow!" << endl;
+            return (Type)(-1);
+        }
+        return arr[top--];
+    }
+
+    Type peek()
+    {
+        if (isEmpty())
+        {
+            cout << "Stack is empty!" << endl;
+            return (Type)(-1);
+        }
+        return arr[top];
+    }
+
+    bool isEmpty()
+    {
+        return top == -1;
+    }
+
+    ~Stack()
+    {
+        delete[] arr;
+    }
+};
+
+template<typename Type>
+class QueueUsingStacks
+{
+private:
+    Stack<Type> stack1, stack2;
+
+public:
+    QueueUsingStacks(int size = 100) : stack1(size), stack2(size)
+    {}
+
+    void enqueue(Type value)
+    {
+        stack1.push(value);
+    }
+
+    Type dequeue()
+    {
+        if (stack2.isEmpty())
+        {
+            while (!stack1.isEmpty())
+            {
+                stack2.push(stack1.pop());
+            }
+        }
+
+        if (stack2.isEmpty())
+        {
+            cout << "Queue is empty!" << endl;
+            return (Type)(-1);
+        }
+
+        return stack2.pop();
+    }
+
+    Type peek()
+    {
+        if (stack2.isEmpty())
+        {
+            while (!stack1.isEmpty())
+            {
+                stack2.push(stack1.pop());
+            }
+        }
+
+        if (stack2.isEmpty())
+        {
+            cout << "Queue is empty!" << endl;
+            return (Type)(-1);
+        }
+
+        return stack2.peek();
+    }
+
+    bool isEmpty()
+    {
+        return stack1.isEmpty() && stack2.isEmpty();
+    }
+};
+
+int main()
+{
+    QueueUsingStacks<int> q;
+
+    q.enqueue(10);
+    q.enqueue(20);
+    q.enqueue(30);
+
+    cout << "Front: " << q.peek() << endl;  // 10
+
+    cout << "Dequeued: " << q.dequeue() << endl;  // 10
+    cout << "Dequeued: " << q.dequeue() << endl;  // 20
+
+    q.enqueue(40);
+    cout << "Front: " << q.peek() << endl;  // 30
+
+    cout << "Dequeued: " << q.dequeue() << endl;  // 30
+    cout << "Dequeued: " << q.dequeue() << endl;  // 40
+
+    cout << "Dequeued: " << q.dequeue() << endl;  // Queue is empty
+
+    return 0;
+}
